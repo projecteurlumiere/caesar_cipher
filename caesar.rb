@@ -1,22 +1,22 @@
-def define_ascii(array, symbol, shift, min_ascii, max_ascii)
+def define_ascii(newstring, symbol, shift, min_ascii, max_ascii)
   if (symbol.ord + shift) < min_ascii
-    array << (symbol.ord + shift + 26).chr
+    newstring << (symbol.ord + shift + 26).chr
   elsif (symbol.ord + shift) > max_ascii
-    array << (symbol.ord + shift - 26).chr 
+    newstring << (symbol.ord + shift - 26).chr 
   else
-    array << (symbol.ord + shift).chr
+    newstring << (symbol.ord + shift).chr
   end
 end
 
 def caesar_cipher(string, shift)
   shift = shift - ((shift / 26) * 26) # division returns not rounded integer
-  ciphered = string.split("").reduce("") do | newarray, symbol |
+  ciphered = string.split("").reduce("") do | newstring, symbol |
     if (symbol.ord >= 97 && symbol.ord <= 122) 
-      define_ascii(newarray, symbol, shift, 97, 122)
+      define_ascii(newstring, symbol, shift, 97, 122)
     elsif (symbol.ord >= 65 && symbol.ord <= 90)
-      define_ascii(newarray, symbol, shift, 65, 90)
+      define_ascii(newstring, symbol, shift, 65, 90)
     else 
-      newarray << symbol
+      newstring << symbol
     end
   end
   ciphered
