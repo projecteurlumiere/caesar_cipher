@@ -9,7 +9,6 @@ class Board
       @columns = columns
       @board = Hash.new(0)
       i = 1
-      i_d = rows
       rows.times do
         array = ((((columns * rows) / rows * i) - columns + 1)..(columns * rows) / rows * i).to_a
         array = array.map do | number |
@@ -17,7 +16,6 @@ class Board
         end
         @board[i] = array
         i += 1
-        i_d -= 1
       end
     @board
     display()
@@ -35,12 +33,16 @@ class Board
   end
 
   def change_board(number, symbol)
-    get_coordinates(number, symbol)
-    if legal?(symbol)
-      process_turn(symbol)
-      set_legality(symbol)
+    if legal_number?(number)
+      get_coordinates(number, symbol)
+      if legal_symbol?(symbol)
+        process_turn(symbol)
+        set_legality(symbol)
+      else
+        p "ERROR: ILLEGAL SYMBOL"
+      end
     else
-      p "ERROR: ILLEGAL TURN"
+      p "ERROR: ILLEGAL NUMBER"
     end
     display()
   end
@@ -59,12 +61,20 @@ class Board
   end
 
 
-  def legal?(symbol)
+  def legal_symbol?(symbol)
     if @board[@row][@column] == "X" || @board[@row][@column] == "O"
       false
     elsif symbol == "X" && @x_is_legal == true
       true
     elsif symbol == "O" && @o_is_legal == true
+      true
+    else
+      false
+    end
+  end
+
+  def legal_number?(number)
+    if (1..(@columns * @rows)).to_a.include?(number) == true 
       true
     else
       false
@@ -104,6 +114,4 @@ threeBoard = Board.new(3, 3)
 bob = Player.new(threeBoard, "X")
 mag = Player.new(threeBoard, "O")
 
-bob.play(5)
-mag.play(8)
-bob.play(8)
+bob.play(10)
