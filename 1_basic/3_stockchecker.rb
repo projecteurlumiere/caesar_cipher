@@ -15,7 +15,7 @@ def stock_picker(array)
     profits << pair[2]
   end
   result = all_pairs[profits.index(profits.max)]
-  puts "buy for #{result[0]} and sell for #{result[1]} to get a profit of #{result[2]}"
+  "buy for #{result[0]} and sell for #{result[1]} to get a profit of #{result[2]}"
 end
 
 stock_picker([17,3,6,9,15,8,6,1,10])
