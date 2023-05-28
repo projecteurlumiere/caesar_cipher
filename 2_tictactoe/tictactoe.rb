@@ -10,7 +10,11 @@ class Board
       i_d = rows
       rows.times do
         array = ((((columns * rows) / rows * i) - columns + 1)..(columns * rows) / rows * i).to_a
-        @board[i] = array.to_a
+        array = array.map do | number |
+          number.to_s
+        end
+        puts array
+        @board[i] = array
         i += 1
         i_d -= 1
       end
@@ -70,9 +74,7 @@ threeBoard.display
 bob = PlayerOne.new(threeBoard)
 i = 1
 
-9.times do
-  bob.play(i)
-  i += 1
-end
+bob.play(5)
+
 
 threeBoard.display
