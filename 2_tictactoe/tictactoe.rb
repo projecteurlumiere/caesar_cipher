@@ -1,24 +1,14 @@
 class Board
-  def initialize(rows, columns)
-    if rows != 3 || columns != 3
+  def initialize(size)
+    if size != 3
       p 'ERROR: GO WITH 3x3 FOR NOW'
     else
-      @x_is_legal = true 
-      @o_is_legal = true
-      @rows = rows
-      @columns = columns
+      @rows = size
+      @columns = size
       @board = Hash.new(0)
-      i = 1
-      rows.times do
-        array = ((((columns * rows) / rows * i) - columns + 1)..(columns * rows) / rows * i).to_a
-        array = array.map do | number |
-          number.to_s
-        end
-        @board[i] = array
-        i += 1
-      end
-    @board
-    display()
+      generate_board
+      allow_first_turn
+      display
     end
   end
 
@@ -47,7 +37,25 @@ class Board
     display()
   end
 
-  private 
+  private
+
+  def generate_board
+    i = 1
+    @rows.times do
+      array = ((((@columns * @rows) / @rows * i) - @columns + 1)..(@columns * @rows) / @rows * i).to_a
+      array = array.map do | number |
+        number.to_s
+      end
+      @board[i] = array
+      i += 1
+    end
+  end
+
+  def allow_first_turn
+    @x_is_legal = true 
+    @o_is_legal = true
+  end
+
   def get_coordinates(number, symbol)
     @row = (number / @columns)
     if number % @columns != 0
@@ -109,9 +117,9 @@ end
 
 
 
-threeBoard = Board.new(3, 3)
+threeBoard = Board.new(3)
 
 bob = Player.new(threeBoard, "X")
 mag = Player.new(threeBoard, "O")
 
-bob.play(10)
+bob.play(5)
