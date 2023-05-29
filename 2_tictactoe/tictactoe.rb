@@ -5,10 +5,8 @@ class Board
     else
       @rows = size
       @columns = size
-      @board = Hash.new(0)
-      generate_board
-      allow_first_turn
-      display
+      @maxturns = size ** 2
+      generate_game
     end
   end
 
@@ -28,17 +26,31 @@ class Board
       if legal_symbol?(symbol)
         process_turn(symbol)
         set_legality(symbol)
+        @turn += 1
       else
         p "ERROR: ILLEGAL SYMBOL"
       end
     else
       p "ERROR: ILLEGAL NUMBER"
     end
-    display()
+    display
+    get_winner
+    if gameover?
+      p "GAME OVER"
+      generate_game
+    end
   end
 
   private
 
+  def generate_game    
+    @turn = 1
+    @board = Hash.new(0)
+    generate_board
+    allow_first_turn
+    display
+  end
+  
   def generate_board
     i = 1
     @rows.times do
@@ -98,9 +110,84 @@ class Board
       @o_is_legal = false 
     end
   end
+
+  def get_winner
+    @x_wins = false
+    @o_wins = false
+    check_horizontal
+    check_diagonal(true)
+    check_diagonal(false)
+    check_vertical
+    if @x_wins == true
+      p "X won"
+    elsif @o_wins == true
+      p "O won"
+    end
+  end
+
+  def check_horizontal
+    i = 1
+    @rows.times do 
+      if @board[i] == ["X", "X", "X"]
+        @x_wins = true
+        break
+      elsif @board[i] == ["O", "O", "O"]
+        @o_wins = true
+        break
+      else
+        i += 1
+      end
+    end
+  end
+
+  def check_diagonal(from_left)
+    i = 1
+    @horizontal_array = Array.new(0)
+    @columns.times do
+      if from_left == true
+        @horizontal_array << @board[i][(i - 1)]
+      elsif from_left == false
+        @horizontal_array << @board[i][(@columns - i)]
+      end
+      i += 1
+    end
+    if @horizontal_array == ["X", "X", "X"] 
+      @x_wins = true
+    elsif @horizontal_array == ["O", "O", "O"]
+      @o_wins = true
+    end
+  end
+
+  def check_vertical
+    c = 0
+    @columns.times do
+      r = 1
+      @vertical_array = Array.new(0)
+      @rows.times do
+        @vertical_array << @board[r][c]
+        r += 1
+      end
+      if @vertical_array == ["X", "X", "X"] 
+        @x_wins = true
+      elsif @vertical_array == ["O", "O", "O"]
+        @o_wins = true
+      end
+      c += 1
+    end
+  end
+
+  def gameover?
+    if @x_wins == true || @o_wins == true || @turn >= @maxturns
+      true
+    else
+      false
+    end
+  end
 end
 
+
 class Player
+
   def initialize(board_name, symbol)
     if symbol != "X" && symbol != "O"
       p "ERROR: WRONG SYMBOL"
@@ -115,11 +202,44 @@ class Player
   end
 end
 
+def choose_size
+  board_size = gets.chomp.to_i
+  if board_size != 5 && board_size != 3
+    puts "(NOT) WRONG! (BUT) COME AGAIN (3 or 5)"
+    choose_size
+  end
+  board_size
+end
+
+def choose_symbols
+  first_symbol = gets.chomp.to_s
+  p first_symbol
+  if first_symbol == "X"
+    second_symbol = "O"
+  elsif first_symbol == "O" || first_symbol == "0"
+    first_symbol = "O"
+    second_symbol = "X"
+    puts "Second Player, you are #{second_symbol}"
+  else 
+    puts "WRONG! COME AGAIN. X or O"
+    start_game
+  end
+end
 
 
-threeBoard = Board.new(3)
+puts "Choose your board size"
+board_size = choose_size
 
-bob = Player.new(threeBoard, "X")
-mag = Player.new(threeBoard, "O")
+puts "First Player - your symbol: X or O?"
 
-bob.play(5)
+first_symbol = ""
+second_symbol = ""
+choose_symbols
+
+p board_size 
+board = Board.new(board_size)
+
+p first_symbol
+p second_symbol
+first_player = Player.new(board, first_symbol)
+second_player = Player.new(board, second_symbol)
