@@ -10,21 +10,21 @@ class Board
   end
 
   def display
-    p "-------------"
+    p '-------------'
     i = 1
     @rows.times do
       p @board[i]
       i += 1
     end
-    p "-------------"
+    p '-------------'
   end
 
   def error?
     @change_error
   end
 
-  def generate_game    
-    @turn = 1
+  def generate_game
+    @turn = 0
     @x_wins = false
     @o_wins = false
     @board = Hash.new(0)
@@ -41,11 +41,11 @@ class Board
         @turn += 1
         @change_error = false
       else
-        puts "ERROR: ILLEGAL SYMBOL"
+        puts 'ERROR: ILLEGAL SYMBOL'
         @change_error = true
       end
     else
-      puts "ERROR: ILLEGAL NUMBER"
+      puts 'ERROR: ILLEGAL NUMBER'
       @change_error = true
     end
     display
@@ -56,11 +56,11 @@ class Board
   end
 
   def legal_symbol?(symbol)
-    if @board[@row][@column] == "X" || @board[@row][@column] == "O"
+    if @board[@row][@column] == 'X' || @board[@row][@column] == 'O'
       false
-    elsif symbol == "X" && @x_is_legal == true
+    elsif symbol == 'X' && @x_is_legal == true
       true
-    elsif symbol == "O" && @o_is_legal == true
+    elsif symbol == 'O' && @o_is_legal == true
       true
     else
       false
@@ -68,13 +68,12 @@ class Board
   end
 
   def legal_number?(number)
-    if (1..(@columns * @rows)).to_a.include?(number) == true 
+    if (1..(@columns * @rows)).to_a.include?(number)
       true
     else
       false
     end
   end
-
 
   def gameover?
     if @x_wins == true || @o_wins == true || @turn >= @maxturns
@@ -90,17 +89,17 @@ class Board
     puts "Choose board's size (3 or 5)"
     board_size = gets.chomp.to_i
     if board_size != 5 && board_size != 3
-      puts "WRONG! COME AGAIN (3 or 5)"
+      puts 'WRONG! COME AGAIN (3 or 5)'
       choose_size
     end
     board_size
   end
-  
+
   def generate_board
     i = 1
     @rows.times do
       array = ((((@columns * @rows) / @rows * i) - @columns + 1)..(@columns * @rows) / @rows * i).to_a
-      array = array.map do | number |
+      array = array.map do |number|
         number.to_s
       end
       @board[i] = array
@@ -109,7 +108,7 @@ class Board
   end
 
   def allow_first_turn
-    @x_is_legal = true 
+    @x_is_legal = true
     @o_is_legal = true
   end
 
@@ -126,10 +125,10 @@ class Board
   end
 
   def set_legality(symbol)
-    if symbol == "X"
+    if symbol == 'X'
       @x_is_legal = false
       @o_is_legal = true 
-    elsif symbol == "O"
+    elsif symbol == 'O'
       @x_is_legal = true
       @o_is_legal = false 
     end
@@ -143,19 +142,21 @@ class Board
     check_diagonal(false)
     check_vertical
     if @x_wins == true
-      puts "X won"
+      puts 'X won'
     elsif @o_wins == true
-      puts "O won"
+      puts 'O won'
+    elsif @x_wins == false && @o_wins == false && gameover? == true
+      puts 'NO ONE won'
     end
   end
 
   def check_horizontal
     i = 1
     @rows.times do 
-      if @board[i] == ["X", "X", "X"]
+      if @board[i] == ['X', 'X', 'X']
         @x_wins = true
         break
-      elsif @board[i] == ["O", "O", "O"]
+      elsif @board[i] == ['O', 'O', 'O']
         @o_wins = true
         break
       else
@@ -175,9 +176,9 @@ class Board
       end
       i += 1
     end
-    if @horizontal_array == ["X", "X", "X"] 
+    if @horizontal_array == ['X', 'X', 'X'] 
       @x_wins = true
-    elsif @horizontal_array == ["O", "O", "O"]
+    elsif @horizontal_array == ['O', 'O', 'O']
       @o_wins = true
     end
   end
@@ -191,16 +192,15 @@ class Board
         @vertical_array << @board[r][c]
         r += 1
       end
-      if @vertical_array == ["X", "X", "X"] 
+      if @vertical_array == ['X', 'X', 'X'] 
         @x_wins = true
-      elsif @vertical_array == ["O", "O", "O"]
+      elsif @vertical_array == ['O', 'O', 'O']
         @o_wins = true
       end
       c += 1
     end
   end
 end
-
 
 class Player
   def initialize(board_name) 
@@ -213,7 +213,7 @@ class Player
   def play(number)
     @board_name.change_board(number, @symbol)
   end
-  
+
   def get_symbol
     @symbol
   end
@@ -223,8 +223,8 @@ class Player
   def choose_symbol
     puts "\n#{@name}, choose X or O?\n"
     @symbol = gets.chomp.upcase.to_s
-    if @symbol != "X" && @symbol != "O"
-      puts "WRONG! X or O?"
+    if @symbol != 'X' && @symbol != 'O'
+      puts 'WRONG! X or O?'
       choose_symbol
     else
       @symbol
@@ -234,11 +234,9 @@ end
 
 board = Board.new
 
-
 player_one = Player.new(board)
 puts "\nMoving to next player\n"
 player_two = Player.new(board)
-
 
 while player_one.get_symbol == player_two.get_symbol
   puts "\nWell, you two can't play with the same symbols. Choose again\n\nFirst player, come back"
@@ -256,7 +254,7 @@ loop do
     puts "\nFirst player, your turn. Choose number\n"
     player_one.play(gets.chomp.to_i)
     while board.error?
-      puts "WRONG NUMBER! COME AGAIN"
+      puts 'WRONG NUMBER! COME AGAIN'
       player_one.play(gets.chomp.to_i)
     end
 
@@ -265,21 +263,21 @@ loop do
     puts "\nSecond player, your turn. Choose number\n"
     player_two.play(gets.chomp.to_i)
     while board.error?
-      puts "WRONG NUMBER! COME AGAIN"
+      puts 'WRONG NUMBER! COME AGAIN'
       player_two.play(gets.chomp.to_i)
     end
   end
 
   puts "\nAnother one? Yes or No\n"
   response = gets.chomp.upcase
-  until response == "YES" || response == "NO"
-    puts "YES or NO"
+  until response == 'YES' || response == 'NO'
+    puts 'YES or NO'
     response = gets.chomp.upcase
   end
 
-  board.generate_game if response == "YES"
+  board.generate_game if response == 'YES'
 
-  break if response == "NO"
+  break if response == 'NO'
 end
 
 puts "\nbye!\n"
