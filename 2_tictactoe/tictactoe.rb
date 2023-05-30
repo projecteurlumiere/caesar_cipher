@@ -1,13 +1,12 @@
 class Board
-  def initialize(size)
-    if size != 3
-      p 'ERROR: GO WITH 3x3 FOR NOW'
-    else
-      @rows = size
-      @columns = size
-      @maxturns = size ** 2
-      generate_game
-    end
+  def initialize
+    @size = choose_size
+    @rows = @size
+    @columns = @size
+    @maxturns = @size**2
+    @change_error = false
+    generate_game
+    display
   end
 
   def display
@@ -20,6 +19,19 @@ class Board
     p "-------------"
   end
 
+  def error?
+    @change_error
+  end
+
+  def generate_game    
+    @turn = 1
+    @x_wins = false
+    @o_wins = false
+    @board = Hash.new(0)
+    generate_board
+    allow_first_turn
+  end
+
   def change_board(number, symbol)
     if legal_number?(number)
       get_coordinates(number, symbol)
@@ -27,28 +39,61 @@ class Board
         process_turn(symbol)
         set_legality(symbol)
         @turn += 1
+        @change_error = false
       else
-        p "ERROR: ILLEGAL SYMBOL"
+        puts "ERROR: ILLEGAL SYMBOL"
+        @change_error = true
       end
     else
-      p "ERROR: ILLEGAL NUMBER"
+      puts "ERROR: ILLEGAL NUMBER"
+      @change_error = true
     end
     display
     get_winner
     if gameover?
-      p "GAME OVER"
-      generate_game
+      puts "\nGAME OVER\n"
+    end
+  end
+
+  def legal_symbol?(symbol)
+    if @board[@row][@column] == "X" || @board[@row][@column] == "O"
+      false
+    elsif symbol == "X" && @x_is_legal == true
+      true
+    elsif symbol == "O" && @o_is_legal == true
+      true
+    else
+      false
+    end
+  end
+
+  def legal_number?(number)
+    if (1..(@columns * @rows)).to_a.include?(number) == true 
+      true
+    else
+      false
+    end
+  end
+
+
+  def gameover?
+    if @x_wins == true || @o_wins == true || @turn >= @maxturns
+      true
+    else
+      false
     end
   end
 
   private
 
-  def generate_game    
-    @turn = 1
-    @board = Hash.new(0)
-    generate_board
-    allow_first_turn
-    display
+  def choose_size
+    puts "Choose board's size (3 or 5)"
+    board_size = gets.chomp.to_i
+    if board_size != 5 && board_size != 3
+      puts "WRONG! COME AGAIN (3 or 5)"
+      choose_size
+    end
+    board_size
   end
   
   def generate_board
@@ -80,27 +125,6 @@ class Board
     @board[@row][@column] = symbol
   end
 
-
-  def legal_symbol?(symbol)
-    if @board[@row][@column] == "X" || @board[@row][@column] == "O"
-      false
-    elsif symbol == "X" && @x_is_legal == true
-      true
-    elsif symbol == "O" && @o_is_legal == true
-      true
-    else
-      false
-    end
-  end
-
-  def legal_number?(number)
-    if (1..(@columns * @rows)).to_a.include?(number) == true 
-      true
-    else
-      false
-    end
-  end
-
   def set_legality(symbol)
     if symbol == "X"
       @x_is_legal = false
@@ -119,9 +143,9 @@ class Board
     check_diagonal(false)
     check_vertical
     if @x_wins == true
-      p "X won"
+      puts "X won"
     elsif @o_wins == true
-      p "O won"
+      puts "O won"
     end
   end
 
@@ -175,71 +199,87 @@ class Board
       c += 1
     end
   end
-
-  def gameover?
-    if @x_wins == true || @o_wins == true || @turn >= @maxturns
-      true
-    else
-      false
-    end
-  end
 end
 
 
 class Player
-
-  def initialize(board_name, symbol)
-    if symbol != "X" && symbol != "O"
-      p "ERROR: WRONG SYMBOL"
-    else  
-      @board_name = board_name
-      @symbol = symbol
-    end
+  def initialize(board_name) 
+    @board_name = board_name
+    puts "\nWhat's your name?\n"
+    @name = gets.chomp.to_s
+    @symbol = choose_symbol
   end
 
   def play(number)
     @board_name.change_board(number, @symbol)
   end
-end
-
-def choose_size
-  board_size = gets.chomp.to_i
-  if board_size != 5 && board_size != 3
-    puts "(NOT) WRONG! (BUT) COME AGAIN (3 or 5)"
-    choose_size
+  
+  def get_symbol
+    @symbol
   end
-  board_size
-end
 
-def choose_symbols
-  first_symbol = gets.chomp.to_s
-  p first_symbol
-  if first_symbol == "X"
-    second_symbol = "O"
-  elsif first_symbol == "O" || first_symbol == "0"
-    first_symbol = "O"
-    second_symbol = "X"
-    puts "Second Player, you are #{second_symbol}"
-  else 
-    puts "WRONG! COME AGAIN. X or O"
-    start_game
+  private
+
+  def choose_symbol
+    puts "\n#{@name}, choose X or O?\n"
+    @symbol = gets.chomp.upcase.to_s
+    if @symbol != "X" && @symbol != "O"
+      puts "WRONG! X or O?"
+      choose_symbol
+    else
+      @symbol
+    end
   end
 end
 
+board = Board.new
 
-puts "Choose your board size"
-board_size = choose_size
 
-puts "First Player - your symbol: X or O?"
+player_one = Player.new(board)
+puts "\nMoving to next player\n"
+player_two = Player.new(board)
 
-first_symbol = ""
-second_symbol = ""
-choose_symbols
 
-p board_size 
-board = Board.new(board_size)
+while player_one.get_symbol == player_two.get_symbol
+  puts "\nWell, you two can't play with the same symbols. Choose again\n\nFirst player, come back"
+  player_one = Player.new(board)
 
-p first_symbol
-p second_symbol
-first_player = Player.new(board, first_symbol)
-second_player = Player.new(board, second_symbol)
+  puts "\nmoving to next player\n"
+  player_two = Player.new(board)
+end
+
+loop do
+  puts "\nSo the game shall begin!\n"
+  board.display
+
+  while board.gameover? == false
+    puts "\nFirst player, your turn. Choose number\n"
+    player_one.play(gets.chomp.to_i)
+    while board.error?
+      puts "WRONG NUMBER! COME AGAIN"
+      player_one.play(gets.chomp.to_i)
+    end
+
+    break if board.gameover? != false
+
+    puts "\nSecond player, your turn. Choose number\n"
+    player_two.play(gets.chomp.to_i)
+    while board.error?
+      puts "WRONG NUMBER! COME AGAIN"
+      player_two.play(gets.chomp.to_i)
+    end
+  end
+
+  puts "\nAnother one? Yes or No\n"
+  response = gets.chomp.upcase
+  until response == "YES" || response == "NO"
+    puts "YES or NO"
+    response = gets.chomp.upcase
+  end
+
+  board.generate_game if response == "YES"
+
+  break if response == "NO"
+end
+
+puts "\nbye!\n"
