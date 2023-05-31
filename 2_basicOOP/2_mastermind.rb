@@ -23,7 +23,7 @@ class Game
 
   def play_against_computer(cipher)
     @max_rounds.times do
-      puts "\nRound #{@round} out of #{max_rounds}\n\nMake a guess. Four letters A to F. No repeats\n"
+      puts "\nRound #{@round} out of #{@max_rounds}\n\nMake a guess. Four letters A to F. No repeats\n"
       @guess = @player.get_a_code_array
       @guess_result = assess_a_guess(@guess, cipher)
       puts "\nYou guessed #{@guess_result[0]} letters and #{@guess_result[1]} [positions]"
@@ -34,6 +34,7 @@ class Game
       puts "\nGAME OVER\n\nYOU WIN!\n"
     else
       puts "\nGAME OVER\n\nYOU LOSE!\n"
+    end
   end
 
   def assess_a_guess(guess, cipher)
