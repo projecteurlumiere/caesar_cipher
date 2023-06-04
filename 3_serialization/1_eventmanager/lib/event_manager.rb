@@ -8,6 +8,17 @@ def clean_zipcode(zipcode)
   zipcode.to_s.rjust(5,"0")[0..4]
 end
 
+def clean_phone(phone)
+  phone = phone.delete('().-').delete(' ')
+  if phone.length == 10 
+    phone
+  elsif phone[0] == 1 && phone.length == 11
+    phone[1..-1]
+  else 
+    nil
+  end
+end
+
 def legislators_by_zipcode(zip)
   civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
   civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
@@ -44,6 +55,8 @@ contents = CSV.open(
 template_letter = File.read('form_letter.erb')
 erb_template = ERB.new template_letter
 
+=begin 
+
 contents.each do |row|
   id = row[0]
   name = row[:first_name]
@@ -53,6 +66,15 @@ contents.each do |row|
   form_letter = erb_template.result(binding)
 
   save_thank_you_letter(id,form_letter)
-end
+end 
 
-# My code
+=end
+
+# My code:
+
+contents.each do |row|
+  name = row[:first_name]
+  number = clean_phone(row[:homephone])
+
+  puts "#{name} and #{number}"
+end
