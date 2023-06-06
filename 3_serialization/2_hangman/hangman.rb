@@ -70,7 +70,7 @@ class Game
   end
 
   def start_game
-    if File.exist?("./save_files/save.yml")
+    if File.exist?("save.yml")
       load_previous_game
     else
       generate_new_game
@@ -235,16 +235,14 @@ class SaveLoad
     @game_info = @game.get_game_information
     @game_info.merge!(@player.get_used_letters_and_phrases)
 
-    Dir.mkdir('save_files') unless Dir.exist?('save_files')
-    YAML.dump(@game_info)
-    File.open('save_files/save.yml', 'w') do |file|
+    File.open('save.yml', 'w') do |file|
       file.write @game_info.to_yaml
     end
   end
 
   def load_game
     begin
-      File.open('save_files/save.yml', 'r') do |file|
+      File.open('save.yml', 'r') do |file|
         YAML.load_file(file)
       end
     rescue 
@@ -253,7 +251,7 @@ class SaveLoad
   end
 
   def delete_save
-    File.delete('save_files/save.yml')
+    File.delete('save.yml')
   end
 end
 
