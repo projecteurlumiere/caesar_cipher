@@ -19,7 +19,7 @@ class Array
     new_array = []
 
     first_array.each_with_index do |first_array_element, first_array_element_index|
-      
+
       second_array.each_with_index do |second_array_element, second_array_element_index|
         if second_array_element.nil?
           next
