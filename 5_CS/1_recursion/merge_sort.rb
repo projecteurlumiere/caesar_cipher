@@ -37,6 +37,3 @@ class Array
     new_array
   end
 end
-
-a = [3,2,1,6,8,7,5,4]
-p a.merge_sort
