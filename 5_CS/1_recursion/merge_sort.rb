@@ -19,7 +19,7 @@ class Array
     new_array = []
 
     first_array.each_with_index do |first_array_element, first_array_element_index|
-
+      
       second_array.each_with_index do |second_array_element, second_array_element_index|
         if second_array_element.nil?
           next
@@ -49,6 +49,3 @@ class Array
     sorted_array + array_to_add
   end
 end
-
-array_in_question = [4, 2, 6, 1, 3, 5]
-p array_in_question.merge_sort
