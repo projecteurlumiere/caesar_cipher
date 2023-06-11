@@ -18,34 +18,25 @@ class Array
   def compare_and_merge_two_sorted_arrays(first_array, second_array)
     new_array = []
 
-    first_array.each_with_index do |first_array_element, first_array_element_index|
-
-      second_array.each_with_index do |second_array_element, second_array_element_index|
-        if second_array_element.nil?
-          next
-        elsif first_array_element >= second_array_element
-          new_array << second_array_element
-          second_array[second_array_element_index] = nil
-        elsif first_array_element < second_array_element
-          new_array << first_array_element
-          first_array[first_array_element_index] = nil
-          break
-        end
+    # way better than the previous nested loops version:
+    while !first_array.empty? && !second_array.empty? do
+      if first_array[0] >= second_array[0]
+        new_array << second_array[0]
+        second_array.shift
+      elsif first_array[0] < second_array[0]
+        new_array << first_array[0]
+        first_array.shift
       end
+    end
 
-      if first_array.all?(nil)
-        new_array = concatenate_the_rest(new_array, second_array)
-        break
-      elsif second_array.all?(nil)
-        new_array = concatenate_the_rest(new_array, first_array)
-        break
-      end
+    if first_array.empty?
+      new_array += second_array
+    elsif second_array.empty?
+      new_array += first_array
     end
     new_array
   end
-
-  def concatenate_the_rest(sorted_array, array_to_add)
-    array_to_add.delete(nil)
-    sorted_array + array_to_add
-  end
 end
+
+a = [3,2,1,6,8,7,5,4]
+p a.merge_sort
