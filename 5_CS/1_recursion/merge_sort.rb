@@ -1,6 +1,6 @@
 class Array
   def merge_sort
-    if self.length == 1
+    if self.length <= 1
       self
     else
       second_half = self.pop(self.length / 2)
@@ -17,23 +17,30 @@ class Array
 
   def compare_and_merge_two_sorted_arrays(first_array, second_array)
     new_array = []
+    first_array_length = first_array.length
+    second_array_length = second_array.length
 
-    # way better than the previous nested loops version:
-    while !first_array.empty? && !second_array.empty? do
-      if first_array[0] >= second_array[0]
-        new_array << second_array[0]
-        second_array.shift
-      elsif first_array[0] < second_array[0]
-        new_array << first_array[0]
-        first_array.shift
+    i_first = 0
+    i_second = 0
+
+    while i_first < first_array_length && i_second < second_array_length do
+      if first_array[i_first] >= second_array[i_second]
+        new_array << second_array[i_second]
+        i_second += 1
+      elsif first_array[i_first] < second_array[i_second]
+        new_array << first_array[i_first]
+        i_first += 1
       end
     end
 
-    if first_array.empty?
-      new_array += second_array
-    elsif second_array.empty?
-      new_array += first_array
+    if i_first == first_array_length
+      addendum = second_array.pop(second_array_length - i_second)
+      new_array += addendum
+    elsif i_second == second_array_length
+      addendum = first_array.pop(first_array_length - i_first)
+      new_array += addendum
     end
+
     new_array
   end
 end
