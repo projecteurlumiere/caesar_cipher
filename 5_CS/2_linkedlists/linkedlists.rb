@@ -1,8 +1,5 @@
-# TODO: tidy up everything
-
 class LinkedList
-  attr_reader :tail
-  attr_reader :head
+  attr_reader :tail, :head
 
   def initialize(*values)
     if values.empty?
@@ -108,7 +105,7 @@ class LinkedList
     @index = 0
 
     until value == at(@index).value
-      break if at(@index).next_node == nil
+      break if at(@index).next_node.nil?
 
       @index += 1
     end
@@ -127,10 +124,10 @@ class LinkedList
       @node = @node.next_node
     end
 
-    @string_output = ""
+    @string_output = ''
 
     @array_of_values.each do |value|
-      value = 'nil' if value == nil
+      value = 'nil' if value.nil?
       @string_output.concat("( #{value} ) -> ")
     end
 
@@ -205,55 +202,11 @@ class LinkedList
   end
 
   class Node
-    attr_accessor :next_node
-    attr_accessor :value
-  
+    attr_accessor :next_node, :value
+
     def initialize(value)
       @value = value
       @next_node = nil
     end
   end
 end
-
-list = LinkedList.new(1, 2, 3, 4, 5)
-p list.to_s
-list.append(1, 2, 3)
-p list.to_s
-list.prepend(-1, -2, -3)
-p list.to_s
-p "list's size is #{list.size}"
-p list.at(4).value
-p list.at(-1).value
-p list.at(100)
-p list.at(-100)
-p list.at(list.size)
-list.pop
-list.pop
-p list.to_s
-list.size.times { list.pop }
-p list.to_s
-p list.contains?(3)
-list.append(3)
-p list.contains?(3)
-p list.find(3)
-list.pop
-p list.find(3)
-list.insert_at(3, 2)
-p list.to_s 
-list.insert_at(4, -1)
-p list.to_s
-list.insert_at(-10, -5)
-p list.to_s
-list.insert_at(999, 1)
-p list.to_s
-list.remove_at(-1)
-list.remove_at(0)
-p list.to_s
-list.remove_at(3)
-p list.to_s
-list.size.times { list.pop }
-p list.to_s
-list.remove_at(100)
-list.insert_at(1, 100)
-p list.to_s
-p list.size
